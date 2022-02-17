@@ -1,0 +1,6 @@
+bpyutils:
+  alpine:
+    pip:
+      packages:
+        - bpyutils
+      alt_install_cmd: git+ssh://git@github.com/achillesrasquinha/bpyutils.git@develop#bpyutils
