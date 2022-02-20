@@ -81,7 +81,7 @@ class Node:
     ):
         def decorator(handler):
             self._publishers[topic] = self._create_publisher_conf(topic,
-                mtype = mtype, rate = rate, queue_size = queue_size)
+                mtype = mtype, rate = rate, queue_size = queue_size, callback = handler)
 
         return decorator
 
@@ -89,7 +89,7 @@ class Node:
         mtype        = DEFAULT["mtype"],
         rate         = DEFAULT["rate"],
         queue_size   = DEFAULT["queue_size"],
-        handler      = lambda x: x
+        callback     = lambda x: x
     ):
         message_conf = get_message_conf(mtype)
         message_type = message_conf["type"]
@@ -97,7 +97,7 @@ class Node:
         return {
             "publisher": rospy.Publisher(topic, message_type, queue_size = queue_size),
             "rate": rate,
-            "callback": handler,
+            "callback": callback,
             "message_type": message_type
         }
 
@@ -155,8 +155,11 @@ class SerialNode(Node):
     def get_serial_packet(self):
         return self._protocol.read_packet(self)
 
+    def serial_read(self):
+        return self.serial.read()
+
     def safe_serial_read(self):
-        bytes_  = self.serial.read()
+        bytes_  = self.serial_read()
         decoded = safe_decode(bytes_)
 
         return decoded
