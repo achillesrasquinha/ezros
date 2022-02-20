@@ -4,6 +4,8 @@ from rosutils.controllers.base import BaseController
 # This controller is heavily inspired by
 # https://github.com/m-lundberg/simple-pid
 
+from bpyutils.util.array import clip, squash
+
 class PIDController(BaseController):
     """
         Create a PID Controller
@@ -16,7 +18,6 @@ class PIDController(BaseController):
         :param output_range: The output range within which the PID must stabilize.
         If provided as a tuple (low, high), the output range must never go lesser than
         the lower value and higher than the upper value.
-
     """
     def __init__(self,
         kp = 1.0,
@@ -67,6 +68,8 @@ class PIDController(BaseController):
 
         # calculate the PID function
         output = self._proportional + self._integral + self._derivative
+        # clip the output
+        output = squash(clip([output], self._output_range))
 
         # update the current to previous time for next iteration
         self._previous_time  = timestamp
