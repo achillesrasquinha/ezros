@@ -3,7 +3,7 @@
 
 **rosutils** is a simple yet effective library to interface with ROS.
 
-### Quickstart
+## Quickstart
 
 ```python
 # import rosutils

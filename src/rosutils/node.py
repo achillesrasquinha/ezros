@@ -1,3 +1,4 @@
+# imports - import ros packages
 import rospy
 from std_msgs.msg import (
     String

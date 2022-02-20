@@ -11,42 +11,67 @@ class PIDController(BaseController):
         :param kp: Proportional Gain
         :param ki: Integral Gain
         :param kd: Derivative Gain
+
+        :param initial: The initial point.
+        :param output_range: The output range within which the PID must stabilize.
+        If provided as a tuple (low, high), the output range must never go lesser than
+        the lower value and higher than the upper value.
+
     """
     def __init__(self,
         kp = 1.0,
         ki = 0.0,
         kd = 0.0,
         initial = 0,
+        output_range = None,
         *args, **kwargs):
         self._super = super(PIDController, self)
         self._super.__init__(*args, **kwargs)
 
-        self.kp = kp
-        self.ki = ki
-        self.kd = kd
+        self._kp = kp
+        self._ki = ki
+        self._kd = kd
 
         # The initial value for the controller...
         self._initial       = initial
+        self._output_range  = output_range
 
         self._previous_time = None
 
-    def __call__(self, system):
-        now     = rostime.now()
+        self.reset()
 
-        dt      = self._previous_time - now
-        di      = system - self._previous_input
+    def __call__(self, value):
+        """
+            Perform an update to the PID controller given the provided value
 
-        error   = self._set_point - system
+            Example
+
+                >>> from rosutils.controller import PIDController
+                >>> pid = PIDController(1, 0, 0)
+                >>> next_value = pid(2)
+        """
+        # get the current timestamp
+        timestamp = rostime.now()
+
+        # difference in time
+        d_time   = self._previous_time - timestamp
+
+        # difference in input
+        d_input = value - (self._previous_input if self._previous_input is not None else value)
+        error   = self._initial - value
 
         self._proportional   = self.kp * error
-        self._integral      += self.ki * error * dt
+        self._integral      += self.ki * error * d_input
 
-        self._derivative     = self.kd * (di / dt)
+        self._derivative    -= self.kd * (d_input / d_time)
 
-        self._previous_time  = now
-        self._previous_input = system
-
+        # calculate the PID function
         output = self._proportional + self._integral + self._derivative
+
+        # update the current to previous time for next iteration
+        self._previous_time  = timestamp
+        # update the current to previous time for next iteration
+        self._previous_input = value
 
         return output
 
@@ -57,5 +82,14 @@ class PIDController(BaseController):
         """
         return (self._proportional, self._integral, self._derivative)
 
-    def __call__(self):
-        pass
+    # return the string representation of this object.
+    def __repr__(self):
+        return "<PID kp=%s ki=%s kd=%s>" % (self._kp, self._ki, self._kd)
+
+    def reset(self):
+        """
+            Reset the PID to an initial state.
+        """
+        self._proportional  = 0
+        self._derivative    = 0
+        self._integral      = 0
