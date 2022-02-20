@@ -6,8 +6,9 @@ from geometry_msgs.msg import (
     Twist
 )
 
-from bpyutils.util.string import get_random_str, safe_encode # , safe_decode
-from bpyutils._compat     import iteritems
+from bpyutils.util.string  import get_random_str, safe_encode # , safe_decode
+from bpyutils._compat      import iteritems
+from bpyutils.util.imports import import_handler
 
 import serial
 
@@ -39,7 +40,10 @@ def get_message_conf(mtype):
         config = MESSAGE_TYPES.get(mtype, "string")
 
     if isinstance(mtype, str):
-        if mtype not in MESSAGE_TYPES:
+        if "." in mtype:
+            mtype  = import_handler(mtype)
+            config = { "type": mtype }
+        elif mtype not in MESSAGE_TYPES:
             raise ValueError("No message type %s found." % mtype)
         else:
             config = MESSAGE_TYPES[mtype]
@@ -61,6 +65,8 @@ class Node:
         self._publishers = { }
 
     def on(self, topic, mtype = "string"):
+        rospy.loginfo("Subscribing to topic: %s..." % topic)
+
         message_conf = get_message_conf(mtype)
         message_type = message_conf["type"]
 
