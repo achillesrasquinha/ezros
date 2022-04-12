@@ -167,8 +167,6 @@ metadata = dict(
     }
 )
 
-
-metadata = generate_distutils_setup(metadata)
-
+metadata = generate_distutils_setup(**metadata)
 
 setup(**metadata)

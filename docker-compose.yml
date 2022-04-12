@@ -8,7 +8,7 @@ services:
     image: ${ROS_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/ros}:core
     volumes:
       - ros_catkin_ws:/${ROS_HOME:-/home/ros}/catkin_ws
-      - .:/${ROS_HOME:-/home/ros}/catkin_ws/src/pacboa
+      - .:/${ROS_HOME:-/home/ros}/catkin_ws/src/ezros
     command: /start
     networks:
       - ros

@@ -2,13 +2,10 @@
 <package format="2">
   <name>ezros</name>
   <version>0.1.0</version>
-  <description>The ezros package</description>
+  <description>Ease your ROS development</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <!-- Example:  -->
-  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
   <maintainer email="achillesrasquinha@gmail.com">Achilles Rasquinha</maintainer>
-
+  <author>Achilles Rasquinha</author>
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
