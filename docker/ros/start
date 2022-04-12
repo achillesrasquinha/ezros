@@ -1,0 +1,15 @@
+#!/bin/bash
+
+source /usr/ros/${ROS_DISTRO}/setup.sh
+
+nohup Xvfb ${DISPLAY} -screen 0 ${RESOLUTION} -ac +extension GLX +render -noreset > /dev/null 2>&1 &
+
+nohup startxfce4 > /dev/null 2>&1 &
+
+nohup x11vnc -xkb -noxrecord -noxdamage -forever -bg -rfbauth ${HOME}/.vnc/passwd -rfbport ${ROS_VNC_PORT} -users ${ROS_USER} # > /dev/null 2>&1 &
+
+roscore -p ${ROS_CORE_PORT} > /dev/null 2>&1 &
+
+/noVNC/utils/novnc_proxy --vnc ${ROS_HOST}:${ROS_VNC_PORT} --listen ${ROS_HOST}:${ROS_PORT} > /dev/null 2>&1 &
+
+tail -f /dev/null

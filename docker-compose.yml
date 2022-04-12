@@ -1,0 +1,41 @@
+version: "3.3"
+
+services:
+  ros:
+    build:
+      context: ./docker/ros
+      dockerfile: ./alpine/Dockerfile
+    image: ${ROS_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/ros}:core
+    volumes:
+      - ros_catkin_ws:/${ROS_HOME:-/home/ros}/catkin_ws
+      - .:/${ROS_HOME:-/home/ros}/catkin_ws/src/pacboa
+    command: /start
+    networks:
+      - ros
+    environment:
+      - ROS_HOST=ros
+
+  proxy:
+    build:
+      context: ./docker/proxy
+      dockerfile: ./Dockerfile
+    image: ${ROS_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/ros}:proxy
+    networks:
+      - ros
+    depends_on:
+      - ros
+    ports:
+      - "80:80"
+    environment:
+      - ROS_HOST=ros
+      - ROS_PORT=${ROS_PORT:-8080}
+      - ROS_VNC_PORT=${ROS_VNC_PORT:-5900}
+      - ROS_SOCKET_PORT=${ROS_SOCKET_PORT:-3000}
+    command: /start
+
+networks:
+  ros:
+    driver: bridge
+
+volumes:
+  ros_catkin_ws: {}

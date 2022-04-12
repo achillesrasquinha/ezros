@@ -24,5 +24,9 @@ default_context:
   github_action: "n"
   ml: "n"
   editor: "vscode"
+<<<<<<< HEAD
   url: "https://github.com/achillesrasquinha/ezros"
   ros: "y"
+=======
+  url: "https://github.com/achillesrasquinha/ezros"
+>>>>>>> template/master
