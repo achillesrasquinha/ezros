@@ -220,8 +220,10 @@ docker-pull: ## Pull Latest Docker Images
 
 	@docker pull $(DOCKER_IMAGE):latest || true
 
-docker-build: clean docker-pull ## Build the Docker Image.
+docker-build: clean docker-pull requirements ## Build the Docker Image.
 	$(call log,INFO,Building Docker Image)
+
+	@[[ -f "${BASEDIR}/docker-compose.yml" ]] && docker-compose build
 
 	if [[ -d "${BASEDIR}/docker/files" ]]; then \
 		for folder in `ls ${BASEDIR}/docker/files`; do \
@@ -229,7 +231,7 @@ docker-build: clean docker-pull ## Build the Docker Image.
 		done \
 	fi
 
-	@docker build $(BASEDIR) --tag $(DOCKER_IMAGE) $(DOCKER_BUILD_ARGS)
+	@[[ -f "${BASEDIR}/Dockerfile" ]] && docker build $(BASEDIR) --tag $(DOCKER_IMAGE) $(DOCKER_BUILD_ARGS)
 
 docker-push: ## Push Docker Image to Registry.
 	@docker push $(DOCKER_IMAGE)$(DOCKER_IMAGE_TAG)
