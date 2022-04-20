@@ -1,11 +1,5 @@
 # imports - import ros packages
 import rospy
-from std_msgs.msg import (
-    String
-)
-from geometry_msgs.msg import (
-    Twist
-)
 
 from bpyutils.util.string  import get_random_str
 from bpyutils.util.imports import import_handler
@@ -20,10 +14,10 @@ def safe_decode(obj, encoding = "utf-8"):
 
 MESSAGE_TYPES = {
     "string": {
-        "type": String
+        "type": "std_msgs.msg.String"
     },
     "twist": {
-        "type": Twist
+        "type": "geometry_msgs.msg.Twist"
     }
 }
 
@@ -46,13 +40,16 @@ def get_message_conf(mtype):
         else:
             config = MESSAGE_TYPES[mtype]
     else:
-        config = { "type": mtype }    
+        if "type" in mtype and isinstance(mtype["type"], str):
+            mtype = import_handler(mtype["type"])
+            
+        config = { "type": mtype }
     
     return config
 
 class Node:
     def __init__(self, name = None, *args, **kwargs):
-        self._name  = name  or "N%s" % get_random_str()
+        self._name  = name or "N%s" % get_random_str()
 
         anonymous   = kwargs.get("anonymous", True)
 
