@@ -1,11 +1,30 @@
 #!/usr/bin/env python
 
 import ezros
+import cv2
+import base64
 
-node = ezros.Node("camera")
+WIDTH   = 480
+HEIGHT  = 360
+
+node    = ezros.Node("camera")
+capture = cv2.VideoCapture(0)
+
 
 @node.pub("/image", "ezros.msg.Image", rate = 10, queue_size = 10)
 def handle_image(message):
+    _, frame = cv2.read()
+
+    width, height = node.p("width", WIDTH), node.p("height", HEIGHT)
+    
+    resized = cv2.resize(frame, (width, height))
+    
+    encoded = base64.b64encode(resized)
+
+    message.width  = width
+    message.height = height
+    message.data   = encoded
+
     return message
 
 if __name__ == "__main__":

@@ -58,12 +58,12 @@ class Node:
 
         rospy.init_node(name, anonymous = anonymous)
 
-        rospy.loginfo("Initialized Node: %s." % name)
+        self.log("Initialized Node: %s." % name)
 
         self._publishers = { }
 
     def on(self, topic, mtype = "string"):
-        rospy.loginfo("Subscribing to topic: %s..." % topic)
+        self.log("Subscribing to topic: %s..." % topic)
 
         message_conf = get_message_conf(mtype)
         message_type = message_conf["type"]
@@ -135,3 +135,66 @@ class Node:
                     rospy_rate.sleep()
         else:
             rospy.spin()
+
+    # log with prefixing [node name] "log string"
+    # easier to debug logs from different nodes.
+    def log(self, string):
+        """
+            Log information.
+            Example
+                >>> node.log("This is a log string.")
+        """
+        # build the log string
+        name   = self.name
+        string = "[%s] %s" % (name, string) # "[node name] log str"
+        
+        # you can control the logging output by just providing this
+        # flag as a parameter. 
+        # verbose if true, will eventually log it.
+        # note, the --screen flag passed within roslaunch is still
+        # considered over this kind of verbosity.
+        verbose = rospy.get_param("verbose", True)
+
+        if verbose:
+            # log it using rospy.loginfo
+            rospy.loginfo(string)
+
+    # a helper function to build a parameter name
+    def _create_param_name(self, name):
+        """
+            A helper function to build a parameter name for a given node.
+            Example
+                >>> node = MyNode(name = "foobar")
+                >>> node._create_param_name("rate")
+                "foobar/rate"
+        """
+        param_name = self.name + "/" + name # concatenate the name/param_name
+        return param_name
+    
+    def get_param(self, name, **kwargs):
+        """
+            A get parameter helper. Fetches a parameter defined for a node.
+            Example
+                >>> node = MyNode(name = "foobar")
+                >>> node.get_param("foobar")
+                "foobar_value"
+        """
+        # create a parameter name
+        param_name = self._create_param_name(name)
+        # get the parameter using rospy.get_param
+        return rospy.get_param(param_name, **kwargs)
+
+    def set_param(self, name, value, **kwargs):
+        """
+            A set parameter helper. Creates a parameter defined for a node.
+            Example
+                >>> node = MyNode(name = "foobar")
+                >>> node.set_param("foobar", "foobar_value") # value set for foobar/foobar
+        """
+        # create a parameter name
+        param_name = self._create_param_name(name)
+        # set the parameter
+        rospy.set_param(param_name, value, **kwargs)
+
+    def p(self, *args, **kwargs):
+        return self.get_param(*args, **kwargs)

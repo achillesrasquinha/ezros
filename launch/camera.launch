@@ -3,5 +3,8 @@
         name="camera"
         pkg="ezros" 
         type="camera"
-        output="screen"/>
+        output="screen">
+        <param name="width" value="480"/>
+        <param name="width" value="360"/>
+    </node>
 </launch>
