@@ -38,6 +38,7 @@ def get_message_conf(mtype):
         elif mtype not in MESSAGE_TYPES:
             raise ValueError("No message type %s found." % mtype)
         else:
+            MESSAGE_TYPES[mtype]["type"] = import_handler(MESSAGE_TYPES[mtype]["type"])
             config = MESSAGE_TYPES[mtype]
     else:
         if "type" in mtype and isinstance(mtype["type"], str):
