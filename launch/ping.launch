@@ -1,0 +1,6 @@
+<launch>
+    <node
+        name="ping"
+        pkg="ezros" 
+        type="ping.py" />
+</launch>
