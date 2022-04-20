@@ -1,0 +1,7 @@
+<launch>
+    <node
+        name="camera"
+        pkg="ezros" 
+        type="camera"
+        output="screen"/>
+</launch>
