@@ -11,7 +11,7 @@ def handle_ping(message):
 
 @node.on("/ping")
 def handle_ping(message):
-    node.pub_msg("/pong", "pong")
+    node.pub_msg("/pong", "pong", create = True)
 
 if __name__ == "__main__":
     node.run()
