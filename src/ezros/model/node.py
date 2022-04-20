@@ -27,6 +27,10 @@ DEFAULT = {
     "queue_size": 10
 }
 
+def get_mtype(message):
+    if isinstance(message, str):
+        return "string"
+
 def get_message_conf(mtype):
     config = MESSAGE_TYPES.get(mtype, "string")
 
@@ -100,7 +104,7 @@ class Node:
 
         if topic not in self._publishers:
             if create:
-                self._publishers[topic] = self._create_publisher_conf(topic, mtype = type(message), *args, **kwargs)
+                self._publishers[topic] = self._create_publisher_conf(topic, mtype = get_mtype(message), *args, **kwargs)
             else:
                 raise ValueError("No publisher of topic type %s found." % topic)
 
