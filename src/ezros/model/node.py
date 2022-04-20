@@ -28,8 +28,7 @@ DEFAULT = {
 }
 
 def get_message_conf(mtype):
-    if mtype is None:
-        config = MESSAGE_TYPES.get(mtype, "string")
+    config = MESSAGE_TYPES.get(mtype, "string")
 
     if isinstance(mtype, str):
         if "." in mtype:
@@ -38,8 +37,7 @@ def get_message_conf(mtype):
         elif mtype not in MESSAGE_TYPES:
             raise ValueError("No message type %s found." % mtype)
         else:
-            MESSAGE_TYPES[mtype]["type"] = import_handler(MESSAGE_TYPES[mtype]["type"])
-            config = MESSAGE_TYPES[mtype]
+            config = { "type": import_handler(config["type"]) }
     else:
         if "type" in mtype and isinstance(mtype["type"], str):
             mtype = import_handler(mtype["type"])
