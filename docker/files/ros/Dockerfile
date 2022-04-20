@@ -32,6 +32,7 @@ RUN set -e && \
     apk add --no-cache \
         bash \
         git \
+        nano \
         x11vnc \
         xvfb \
         xfce4 \
@@ -53,7 +54,8 @@ RUN set -e && \
     if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
     pip install --upgrade pip wheel "setuptools<50" && \
     pip install \
-        pyserial && \
+        pyserial \
+        https://github.com/achillesrasquinha/bpyutils.git@develop#egg=bpyutils && \
     echo "$ROS_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     git clone --depth 1 https://github.com/novnc/noVNC.git /noVNC && \
     git clone --depth 1 https://github.com/novnc/websockify /noVNC/utils/websockify && \

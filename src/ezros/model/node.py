@@ -7,11 +7,8 @@ from geometry_msgs.msg import (
     Twist
 )
 
-from bpyutils.util.string  import get_random_str, safe_encode # , safe_decode
-from bpyutils._compat      import iteritems
+from bpyutils.util.string  import get_random_str
 from bpyutils.util.imports import import_handler
-
-import serial
 
 def safe_decode(obj, encoding = "utf-8"):
     try:
@@ -138,36 +135,3 @@ class Node:
                     rospy_rate.sleep()
         else:
             rospy.spin()
-
-class SerialNode(Node):
-    def __init__(self, *args, **kwargs):
-        port = kwargs["port"]
-        baud = kwargs.get("baudrate", 9700)
-
-        protocol = kwargs.get("protocol")
-        
-        self._super = super(SerialNode, self)
-        self._super.__init__(*args, **kwargs)
-
-        self.serial = serial.Serial(port, baud)
-
-        self._protocol = protocol
-
-    def get_serial_packet(self):
-        return self._protocol.read_packet(self)
-
-    def serial_read(self):
-        return self.serial.read()
-
-    def safe_serial_read(self):
-        bytes_  = self.serial_read()
-        decoded = safe_decode(bytes_)
-
-        return decoded
-
-    def safe_serial_write(self, data):
-        encoded = safe_encode(data)
-        self.serial.write(encoded)
-
-    def write_serial_packet(self, data):
-        self._protocol.write_packet(self, data)

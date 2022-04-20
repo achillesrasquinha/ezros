@@ -23,6 +23,7 @@ from ezros.__attr__ import (
 )
 from ezros.config      import PATH
 from ezros.__main__    import main
+from ezros.model.node  import Node
 
 from bpyutils.cache       import Cache
 from bpyutils.config      import Settings
