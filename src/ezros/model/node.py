@@ -175,7 +175,7 @@ class Node:
         param_name = self.name + "/" + name # concatenate the name/param_name
         return param_name
     
-    def get_param(self, name, **kwargs):
+    def get_param(self, name, default = None, **kwargs):
         """
             A get parameter helper. Fetches a parameter defined for a node.
             Example
@@ -186,7 +186,7 @@ class Node:
         # create a parameter name
         param_name = self._create_param_name(name)
         # get the parameter using rospy.get_param
-        return rospy.get_param(param_name, **kwargs)
+        return rospy.get_param(param_name, default, **kwargs)
 
     def set_param(self, name, value, **kwargs):
         """
@@ -200,5 +200,5 @@ class Node:
         # set the parameter
         rospy.set_param(param_name, value, **kwargs)
 
-    def p(self, name, **kwargs):
-        return self.get_param(name, **kwargs)
+    def p(self, name, default, **kwargs):
+        return self.get_param(name, default, **kwargs)
