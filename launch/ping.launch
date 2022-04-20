@@ -2,5 +2,6 @@
     <node
         name="ping"
         pkg="ezros" 
-        type="ping.py" />
+        type="ping"
+        output="screen"/>
 </launch>

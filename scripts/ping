@@ -2,7 +2,7 @@
 
 import ezros
 
-node = ezros.Node("test")
+node = ezros.Node("ping")
 
 @node.pub("/test", rate = 10, queue_size = 10)
 def handle_ping(message):
