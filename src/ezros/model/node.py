@@ -62,6 +62,10 @@ class Node:
 
         self._publishers = { }
 
+    @property
+    def name(self):
+        return getattr(self, "_name", None)
+
     def on(self, topic, mtype = "string"):
         self.log("Subscribing to topic: %s..." % topic)
 
