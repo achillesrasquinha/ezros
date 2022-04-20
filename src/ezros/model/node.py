@@ -200,5 +200,5 @@ class Node:
         # set the parameter
         rospy.set_param(param_name, value, **kwargs)
 
-    def p(self, *args, **kwargs):
-        return self.get_param(*args, **kwargs)
+    def p(self, name, **kwargs):
+        return self.get_param(name, **kwargs)
