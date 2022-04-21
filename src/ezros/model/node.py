@@ -123,7 +123,7 @@ class Node:
                 for topic in list(self._publishers):
                     config       = self._publishers[topic]
 
-                    rate         = config["rate"]
+                    rate         = self.get_param("rate", config["rate"])
                     callback     = config["callback"]
                     publisher    = config["publisher"]
                     message_type = config["message_type"]
