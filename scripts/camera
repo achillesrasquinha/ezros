@@ -4,13 +4,15 @@ import ezros
 import cv2
 import base64
 
+from bpyutils.util.string import safe_decode
+
 WIDTH   = 480
 HEIGHT  = 360
 
 node    = ezros.Node("camera")
 capture = cv2.VideoCapture(0)
 
-@node.pub("/image", "ezros.msg.Image", rate = 10, queue_size = 10)
+@node.pub("/image", "std_msgs.msg.String", rate = 10, queue_size = 10)
 def handle_image(message):
     _, frame = capture.read()
 
@@ -19,10 +21,11 @@ def handle_image(message):
     resized = cv2.resize(frame, (width, height))
 
     encoded = base64.b64encode(resized)
+    decoded = safe_decode(encoded)
 
-    message.width  = width
-    message.height = height
-    message.data   = encoded
+    # message.width  = width
+    # message.height = height
+    message.data   = decoded
 
     return message
 
