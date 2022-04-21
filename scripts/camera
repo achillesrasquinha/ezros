@@ -18,7 +18,7 @@ def handle_image(message):
 
     width, height = node.p("width", WIDTH), node.p("height", HEIGHT)
     
-    resized = cv2.resize(frame, (height, width))
+    resized = cv2.resize(frame, (width, height))
 
     encoded = base64.b64encode(resized)
     decoded = safe_decode(encoded)
