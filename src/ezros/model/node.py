@@ -3,6 +3,7 @@ import rospy
 
 from bpyutils.util.string  import get_random_str
 from bpyutils.util.imports import import_handler
+from bpyutils.log import get_logger
 
 def safe_decode(obj, encoding = "utf-8"):
     try:
@@ -13,6 +14,9 @@ def safe_decode(obj, encoding = "utf-8"):
     return obj
 
 MESSAGE_TYPES = {
+    None: {
+        "type": "std_msgs.msg.Empty",
+    },
     "string": {
         "type": "std_msgs.msg.String"
     },
@@ -43,7 +47,9 @@ def get_message_conf(mtype):
         else:
             config = { "type": import_handler(config["type"]) }
     else:
-        if "type" in mtype and isinstance(mtype["type"], str):
+        if mtype is None:
+            mtype = import_handler(config["type"])
+        elif "type" in mtype and isinstance(mtype["type"], str):
             mtype = import_handler(mtype["type"])
             
         config = { "type": mtype }
@@ -52,28 +58,31 @@ def get_message_conf(mtype):
 
 class Node:
     def __init__(self, name = None, *args, **kwargs):
-        self._name  = name or "N%s" % get_random_str()
+        self._name   = name or "N%s" % get_random_str()
 
-        anonymous   = kwargs.get("anonymous", True)
+        anonymous    = kwargs.get("anonymous", True)
+
+        self._logger = get_logger("Node %s" % self._name)
 
         rospy.init_node(name, anonymous = anonymous)
 
         self.log("Initialized Node: %s." % name)
 
-        self._publishers = { }
+        self._publishers  = { }
+        self._subscribers = { }
 
     @property
     def name(self):
         return getattr(self, "_name", None)
 
     def on(self, topic, mtype = "string"):
-        self.log("Subscribing to topic: %s..." % topic)
+        self.log("Subscribing to topic: %s (type %s)..." % (topic, mtype))
 
         message_conf = get_message_conf(mtype)
         message_type = message_conf["type"]
 
         def decorator(handler):
-            self._subscriber = rospy.Subscriber(topic, message_type, handler)
+            self._subscribers[topic] = rospy.Subscriber(topic, message_type, handler)
 
         return decorator
 
@@ -161,7 +170,7 @@ class Node:
 
         if verbose:
             # log it using rospy.loginfo
-            rospy.loginfo(string)
+            self._logger.info(string)
 
     # a helper function to build a parameter name
     def _create_param_name(self, name):
@@ -200,5 +209,5 @@ class Node:
         # set the parameter
         rospy.set_param(param_name, value, **kwargs)
 
-    def p(self, name, default, **kwargs):
-        return self.get_param(name, default, **kwargs)
+    def p(self, name, default = None, **kwargs):
+        return self.get_param(name, default = default, **kwargs)
